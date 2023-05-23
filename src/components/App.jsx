@@ -1,25 +1,31 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchContacts } from "redux/operations";
-import { selectError, selectIsLoading } from "redux/selectors";
-import { ContactForm, ContactList, Filter, Loader, Error} from "components";
+
+import { ContactForm, ContactList, Filter } from "components";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import css from './App.module.css'
+// import { Routes, Route } from "react-router-dom";
+// import { SharedLayout } from "./SharedLayout/SharedLayout";
+// import { ContactsPage } from "pages/ContactsPage";
+// import { EditContact } from "pages/EditContact";
+// import { CreateContact } from "pages/CreateContact";
+
+// export const App = () => {
+//   return (
+//     <Routes>
+//       <Route path="/" element={ <SharedLayout /> } >
+//        <Route path="/contacts" element={ <ContactsPage /> }>
+//         <Route path="create" element={ <CreateContact />}/>
+//        </Route>
+//        <Route path="/contacts/:contactId/edit" element={ <EditContact /> }/>
+       
+//        <Route path="*" element={ <ContactsPage /> }/>
+//       </Route>
+
+//     </Routes>
+//   )
+// }
 
 export const App = () => {
-
-  const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-  
-
-  useEffect(() => {
-
-    dispatch(fetchContacts());
-    
-  }, [dispatch]);
-
   return (
     <div className={css.app}>
       <h1>Phonebook</h1>
@@ -28,8 +34,8 @@ export const App = () => {
       <h2>Contacts</h2>
       <Filter />
 
-      {error && <Error message={error}/>}
-      {isLoading && !error && <Loader />}
+      {/* {error && <Error message={error}/>}
+      {isLoading && !error && <Loader />} */}
 
       <ContactList />
 

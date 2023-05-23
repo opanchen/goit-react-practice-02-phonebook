@@ -1,36 +1,42 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { selectVisibleContacts } from 'redux/selectors';
-import { deleteContact } from 'redux/operations';
+import { useSelector } from 'react-redux';
+import { selectFilterValue } from 'redux/selectors';
+import { useGetContactsQuery } from 'redux/contactsSlice';
 import css from './ContactList.module.css';
+import { createSelector } from '@reduxjs/toolkit';
+import { ContactsItem } from './ContactsItem/ContactsItem';
 
 export const ContactList = () => {
 
-  const dispatch = useDispatch();
+
+  // const { data:contacts, error, isLoading } = useGetContactsQuery();
+  const { data:contacts } = useGetContactsQuery();
+//  console.log(contacts);
+
+  // const filter = useSelector(selectFilterValue);
+
+  // const visibleContacts = useSelector(selectVisibleContacts);
+  const selectVisibleContacts = createSelector(
+    [selectFilterValue],
+    (filter) => {
+        const normalizedFilter = filter.toLowerCase();
+        return (contacts || []).filter(contact => contact.name.toLowerCase().includes(normalizedFilter));
+    }
+  );
 
   const visibleContacts = useSelector(selectVisibleContacts);
-
-  const handleDeleteContact = (id) => {
-    dispatch(deleteContact(id));
-  }
 
   return (
     <ul className={css['contact-list']}>
         {visibleContacts.map((contact) => {
-        const {name, phone:number, id} = contact;
+        const {name, phone, id} = contact;
         return (
 
-        <li className={css['contact-item']} key={id}>
-          <p className={css['contact-text']}>
-            <span className={css['contact-name']}>{name}:</span> {number}
-          </p>
-          <button
-            className={css['delete-btn']} 
-            type="button" 
-            onClick={() => handleDeleteContact(id)}
-          >
-            Delete
-          </button>
-        </li>
+          <ContactsItem 
+            key={id}
+            id={id}
+            name={name}
+            number={phone}
+          />
       )}
       )}
     </ul>

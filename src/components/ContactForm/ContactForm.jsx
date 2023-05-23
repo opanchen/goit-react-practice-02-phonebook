@@ -1,25 +1,22 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { selectContacts } from 'redux/selectors';
-import { addContact } from "redux/operations";
 import { nanoid } from 'nanoid';
 import { toast } from "react-toastify";
 import css from './ContactForm.module.css';
+import { useAddContactMutation, useGetContactsQuery } from "redux/contactsSlice";
 
 export const ContactForm = () => {
 
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
-
-    const dispatch = useDispatch();
     
-    const contacs = useSelector(selectContacts); 
+    const [addContact] = useAddContactMutation();
+    const { data:contacts } =  useGetContactsQuery();
 
     const nameInputId = nanoid();
     const numberInputId = nanoid();
 
     const checkContactName = (query) => {
-        return contacs.some(({name}) => name.toLowerCase() === query.toLowerCase())
+        return contacts.some(({name}) => name.toLowerCase() === query.toLowerCase())
     }
 
    const handleChange = (e) => {
@@ -37,6 +34,15 @@ export const ContactForm = () => {
             return
         }
     }
+    
+    const handleAddContact = async (values) => {
+        try {
+            await addContact(values);
+            console.log('Contact has been added.');
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
    const handleSubmit = (e) => {
         e.preventDefault();
@@ -44,9 +50,10 @@ export const ContactForm = () => {
         if (checkContactName(name)) {
             toast.error(`${name} is already in contacts.`)
             return
-        } // we leave to user an opportunity to change name without default reset
+        } 
+        // we leave to user an opportunity to change name without default reset
 
-        dispatch(addContact({name, number}))
+        handleAddContact({name, number});
           
         reset();
     }
